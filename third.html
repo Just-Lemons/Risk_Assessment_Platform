@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Financial Risk Intelligence Platform</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI;
+}
+
+body{
+background:#0a0f1c;
+color:white;
+}
+
+/* TOP BAR */
+
+.topbar{
+height:60px;
+background:#020617;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 30px;
+border-bottom:1px solid #1f2937;
+}
+
+.platform{
+font-size:18px;
+color:#38bdf8;
+font-weight:bold;
+}
+
+.time{
+color:#94a3b8;
+}
+
+/* LAYOUT */
+
+.container{
+display:grid;
+grid-template-columns:300px 1fr 350px;
+height:calc(100vh - 60px);
+}
+
+/* LEFT PANEL */
+
+.left-panel{
+background:#020617;
+border-right:1px solid #1f2937;
+padding:20px;
+}
+
+.left-panel h3{
+margin-bottom:20px;
+color:#38bdf8;
+}
+
+.alert{
+background:#111827;
+padding:15px;
+margin-bottom:12px;
+border-left:4px solid red;
+}
+
+.alert small{
+color:#94a3b8;
+}
+
+/* CENTER PANEL */
+
+.center-panel{
+padding:25px;
+}
+
+.section-title{
+margin-bottom:15px;
+color:#38bdf8;
+}
+
+.stream{
+background:#020617;
+padding:20px;
+border-radius:8px;
+height:500px;
+overflow:auto;
+}
+
+.tx{
+display:flex;
+justify-content:space-between;
+padding:10px;
+border-bottom:1px solid #1f2937;
+}
+
+.high{
+color:#ef4444;
+}
+
+.medium{
+color:#f59e0b;
+}
+
+.low{
+color:#22c55e;
+}
+
+/* RIGHT PANEL */
+
+.right-panel{
+background:#020617;
+border-left:1px solid #1f2937;
+padding:20px;
+}
+
+.risk-box{
+background:#111827;
+padding:20px;
+margin-bottom:20px;
+border-radius:8px;
+}
+
+.risk-box h2{
+color:#38bdf8;
+margin-bottom:10px;
+}
+
+.indicator{
+height:10px;
+background:#1f2937;
+border-radius:5px;
+overflow:hidden;
+}
+
+.level{
+height:10px;
+background:#ef4444;
+width:70%;
+}
+
+/* BUTTON */
+
+button{
+margin-top:15px;
+padding:10px 18px;
+background:#38bdf8;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0284c7;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+<div class="platform">AI Financial Systemic Risk Intelligence</div>
+<div class="time">Live Monitoring Mode</div>
+</div>
+
+
+<div class="container">
+
+<!-- LEFT ALERT PANEL -->
+
+<div class="left-panel">
+
+<h3>Active Risk Alerts</h3>
+
+<div class="alert">
+Rapid Transaction Spike
+<br>
+<small>Global Bank</small>
+</div>
+
+<div class="alert">
+Coordinated Transfers
+<br>
+<small>Trust Finance</small>
+</div>
+
+<div class="alert">
+Liquidity Drain Pattern
+<br>
+<small>Metro Capital</small>
+</div>
+
+</div>
+
+
+<!-- CENTER STREAM -->
+
+<div class="center-panel">
+
+<h2 class="section-title">Live Transaction Intelligence Stream</h2>
+
+<div class="stream">
+
+<div class="tx">
+<span>TX-9921 | Bank Alpha → Bank Delta</span>
+<span class="low">Risk 18</span>
+</div>
+
+<div class="tx">
+<span>TX-9922 | Trust Finance → Secure Bank</span>
+<span class="medium">Risk 54</span>
+</div>
+
+<div class="tx">
+<span>TX-9923 | Capital One → Global Bank</span>
+<span class="high">Risk 87</span>
+</div>
+
+<div class="tx">
+<span>TX-9924 | Metro Finance → Alpha Trust</span>
+<span class="medium">Risk 61</span>
+</div>
+
+<div class="tx">
+<span>TX-9925 | Secure Bank → Delta Finance</span>
+<span class="low">Risk 22</span>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- RIGHT ANALYSIS PANEL -->
+
+<div class="right-panel">
+
+<div class="risk-box">
+
+<h2>Systemic Risk Level</h2>
+
+<div class="indicator">
+<div class="level"></div>
+</div>
+
+<p style="margin-top:10px;color:#ef4444;">HIGH RISK DETECTED</p>
+
+<button>Run Deep Investigation</button>
+
+</div>
+
+<div class="risk-box">
+
+<h2>AI Pattern Detection</h2>
+
+<p>Cluster anomaly detected across 3 institutions.</p>
+
+<button>View Analysis</button>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

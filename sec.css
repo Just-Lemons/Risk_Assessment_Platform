@@ -1,0 +1,47 @@
+body{
+    background:#0b1220;
+    font-family:Segoe UI;
+    color:white;
+    margin:0;
+}
+
+.header{
+    padding:20px 30px;
+    border-bottom:1px solid #1f2937;
+    color:#38bdf8;
+    font-size:20px;
+}
+
+.lab{
+    padding:30px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+.panel{
+    background:#111827;
+    padding:25px;
+    border-radius:10px;
+}
+
+.panel h3{
+    margin-bottom:15px;
+    color:#38bdf8;
+}
+
+.chart{
+    height:200px;
+    border:1px dashed #374151;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#64748b;
+}
+
+.pattern{
+    background:#020617;
+    padding:15px;
+    margin-top:10px;
+    border-left:4px solid #ef4444;
+}
