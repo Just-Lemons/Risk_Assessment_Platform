@@ -16,6 +16,7 @@ def predict_transaction(transaction_features):
 
     # prediction
     prediction = model.predict(data_scaled)
+    
 
     # anomaly score
     score = model.decision_function(data_scaled)[0]

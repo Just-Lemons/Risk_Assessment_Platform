@@ -1,132 +1,1655 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-<title>Risk Intelligence Dashboard</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SentinelFi — AI Financial Risk Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --bg: #04060f;
+    --bg2: #070c1a;
+    --surface: #0b1120;
+    --surface2: #0f1829;
+    --border: rgba(99,179,237,0.12);
+    --border2: rgba(99,179,237,0.06);
+    --cyan: #38bdf8;
+    --cyan-dim: rgba(56,189,248,0.15);
+    --cyan-glow: rgba(56,189,248,0.4);
+    --red: #f87171;
+    --red-dim: rgba(248,113,113,0.15);
+    --amber: #fbbf24;
+    --amber-dim: rgba(251,191,36,0.12);
+    --green: #34d399;
+    --green-dim: rgba(52,211,153,0.12);
+    --text: #e2e8f0;
+    --text-dim: #64748b;
+    --text-mid: #94a3b8;
+  }
 
-body{
-background:#020b1c;
-color:white;
-font-family:Arial;
-}
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-.header{
-padding:20px;
-font-size:24px;
-color:#49b6ff;
-}
+  html { scroll-behavior: smooth; }
 
-.container{
-display:flex;
-padding:20px;
-}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
 
-.left{
-width:20%;
-}
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
 
-.center{
-width:55%;
-}
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(4,6,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border2);
+  }
 
-.right{
-width:25%;
-}
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-.card{
-background:#0b1f3a;
-padding:20px;
-margin-bottom:20px;
-border-radius:10px;
-}
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--cyan), #6366f1);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
 
-.alert{
-border-left:4px solid red;
-padding:10px;
-margin-bottom:10px;
-background:#09182c;
-}
+  .logo span { color: var(--cyan); }
 
-.tx{
-padding:10px;
-border-bottom:1px solid #132a4a;
-}
+  nav ul {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
 
-.high{color:#ff4d4d;}
-.medium{color:#ffb84d;}
-.low{color:#5cff8d;}
+  nav a {
+    text-decoration: none;
+    color: var(--text-mid);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+  }
 
+  nav a:hover { color: var(--cyan); }
+
+  .nav-cta {
+    background: var(--cyan);
+    color: var(--bg) !important;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600 !important;
+    transition: opacity 0.2s !important;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(56,189,248,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,189,248,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(56,189,248,0.07) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--cyan-dim);
+    border: 1px solid rgba(56,189,248,0.3);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--cyan);
+    letter-spacing: 0.5px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+    animation: pulse 1.5s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(42px, 6vw, 80px);
+    line-height: 1.05;
+    letter-spacing: -2px;
+    max-width: 900px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  h1 .accent { color: var(--cyan); }
+  h1 .accent-red { color: var(--red); }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--text-mid);
+    max-width: 580px;
+    margin: 24px auto 0;
+    font-weight: 400;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 40px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-primary {
+    background: var(--cyan);
+    color: var(--bg);
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: all 0.2s;
+    box-shadow: 0 0 30px rgba(56,189,248,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 50px rgba(56,189,248,0.5);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 64px;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: var(--cyan);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SECTION SHARED ─── */
+  section {
+    padding: 100px 48px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 3.5vw, 44px);
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    color: var(--text-mid);
+    max-width: 520px;
+    font-size: 15px;
+  }
+
+  /* ─── PROBLEM / OPPORTUNITY ─── */
+  .problem-section { border-top: 1px solid var(--border2); }
+
+  .threat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 56px;
+    background: var(--border2);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border2);
+  }
+
+  .threat-card {
+    background: var(--surface);
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .threat-card:hover { background: var(--surface2); }
+
+  .threat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .threat-card.red::before { background: linear-gradient(90deg, var(--red), transparent); }
+  .threat-card.amber::before { background: linear-gradient(90deg, var(--amber), transparent); }
+  .threat-card.cyan::before { background: linear-gradient(90deg, var(--cyan), transparent); }
+
+  .threat-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+
+  .threat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 36px;
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+  }
+
+  .red .threat-num { color: var(--red); }
+  .amber .threat-num { color: var(--amber); }
+  .cyan .threat-num { color: var(--cyan); }
+
+  .threat-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .threat-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ─── COMPETITIVE ADVANTAGE ─── */
+  .compare-section { border-top: 1px solid var(--border2); }
+
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 56px;
+  }
+
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 36px;
+    position: relative;
+  }
+
+  .compare-card.them { opacity: 0.7; }
+  .compare-card.us {
+    border-color: rgba(56,189,248,0.3);
+    background: linear-gradient(135deg, var(--surface2), rgba(56,189,248,0.03));
+  }
+
+  .compare-card.us::after {
+    content: '★ OUR EDGE';
+    position: absolute;
+    top: -12px; right: 24px;
+    background: var(--cyan);
+    color: var(--bg);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  .compare-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .compare-logo .tag {
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim);
+    font-weight: 400;
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .compare-tagline {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .feature-list li {
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--text-mid);
+  }
+
+  .feature-list li .icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .feature-list li.good { color: var(--text); }
+  .feature-list li.bad { color: var(--text-dim); text-decoration: line-through; opacity: 0.6; }
+
+  /* ─── HOW IT WORKS ─── */
+  .how-section { border-top: 1px solid var(--border2); }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 56px;
+    position: relative;
+  }
+
+  .steps::before {
+    content: '';
+    position: absolute;
+    top: 44px; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), var(--cyan), var(--border), transparent);
+  }
+
+  .step {
+    padding: 24px;
+    text-align: center;
+  }
+
+  .step-num {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--cyan);
+    margin: 0 auto 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step:nth-child(3) .step-num {
+    background: var(--cyan-dim);
+    border-color: var(--cyan);
+    box-shadow: 0 0 20px var(--cyan-glow);
+  }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .step-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* ─── TECH ─── */
+  .tech-section { border-top: 1px solid var(--border2); }
+
+  .tech-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 64px;
+    align-items: center;
+    margin-top: 56px;
+  }
+
+  .algo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .algo-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+  }
+
+  .algo-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .algo-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    letter-spacing: -0.5px;
+    margin-bottom: 16px;
+  }
+
+  .algo-desc {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.8;
+    margin-bottom: 28px;
+  }
+
+  .algo-props {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .algo-prop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  .prop-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .prop-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), #6366f1);
+    border-radius: 2px;
+    animation: fillBar 1.5s ease both;
+  }
+
+  @keyframes fillBar {
+    from { width: 0; }
+  }
+
+  .prop-label { font-size: 12px; color: var(--text-dim); width: 100px; }
+  .prop-val { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--cyan); width: 36px; text-align: right; }
+
+  .tech-features {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .tech-feat {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+
+  .tech-feat:hover { border-color: rgba(56,189,248,0.2); }
+
+  .feat-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .feat-icon.cyan { background: var(--cyan-dim); }
+  .feat-icon.red { background: var(--red-dim); }
+  .feat-icon.amber { background: var(--amber-dim); }
+  .feat-icon.green { background: var(--green-dim); }
+
+  .feat-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .feat-desc { font-size: 13px; color: var(--text-dim); }
+
+  /* ─── DASHBOARD PREVIEW ─── */
+  .dashboard-section { border-top: 1px solid var(--border2); }
+
+  .dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+  }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    background: var(--green-dim);
+    padding: 6px 14px;
+    border-radius: 100px;
+    border: 1px solid rgba(52,211,153,0.2);
+  }
+
+  .dashboard-mock {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(56,189,248,0.05);
+  }
+
+  .mock-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border2);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .mock-dot.r { background: #f87171; }
+  .mock-dot.y { background: #fbbf24; }
+  .mock-dot.g { background: #34d399; }
+
+  .mock-url {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-left: 8px;
+  }
+
+  .mock-body {
+    display: grid;
+    grid-template-columns: 220px 1fr 260px;
+    min-height: 480px;
+  }
+
+  .mock-sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border2);
+    padding: 20px 0;
+  }
+
+  .mock-sidebar-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--text-mid);
+    padding: 0 20px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .alert-item {
+    padding: 14px 20px;
+    border-left: 3px solid var(--red);
+    margin: 4px 0;
+    background: rgba(248,113,113,0.04);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .alert-item:hover { background: rgba(248,113,113,0.08); }
+  .alert-item.amber { border-left-color: var(--amber); background: rgba(251,191,36,0.04); }
+  .alert-item.amber:hover { background: rgba(251,191,36,0.08); }
+
+  .alert-tx {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    margin-bottom: 3px;
+  }
+
+  .alert-amt { font-size: 12px; color: var(--text); font-weight: 500; }
+  .alert-risk { font-size: 11px; color: var(--red); font-family: 'IBM Plex Mono', monospace; }
+  .alert-item.amber .alert-risk { color: var(--amber); }
+
+  .mock-main { padding: 24px; }
+
+  .mock-main-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-mid);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  .tx-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    border: 1px solid var(--border2);
+    transition: border-color 0.2s;
+  }
+
+  .tx-row:hover { border-color: var(--border); }
+
+  .tx-id {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    width: 60px;
+  }
+
+  .tx-entity {
+    font-size: 12px;
+    font-weight: 500;
+    flex: 1;
+    margin: 0 16px;
+  }
+
+  .tx-amount {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    text-align: right;
+    width: 80px;
+    color: var(--text-mid);
+  }
+
+  .risk-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-weight: 500;
+  }
+
+  .risk-pill.high { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248,113,113,0.2); }
+  .risk-pill.medium { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
+  .risk-pill.low { background: var(--green-dim); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+
+  .mock-panel {
+    background: var(--surface);
+    border-left: 1px solid var(--border2);
+    padding: 24px;
+  }
+
+  .panel-metric {
+    margin-bottom: 24px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .metric-val {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    letter-spacing: -1px;
+  }
+
+  .metric-val.danger { color: var(--red); }
+  .metric-val.cyan { color: var(--cyan); }
+
+  .metric-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .score-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  .score-fill.danger { background: linear-gradient(90deg, var(--amber), var(--red)); width: 73%; }
+  .score-fill.safe { background: linear-gradient(90deg, var(--green), var(--cyan)); width: 12%; }
+
+  .entity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border2);
+    font-size: 12px;
+  }
+
+  .entity-name { color: var(--text-mid); }
+  .entity-level {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+  }
+  .entity-level.high { color: var(--red); }
+  .entity-level.med { color: var(--amber); }
+  .entity-level.low { color: var(--green); }
+
+  /* upload zone */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-top: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .upload-zone:hover { border-color: var(--cyan); }
+  .upload-icon { font-size: 28px; margin-bottom: 8px; }
+  .upload-text { font-size: 12px; color: var(--text-dim); }
+  .upload-text span { color: var(--cyan); }
+
+  /* ─── ROADMAP ─── */
+  .roadmap-section { border-top: 1px solid var(--border2); }
+
+  .timeline {
+    margin-top: 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    padding-left: 40px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 11px; top: 12px; bottom: 12px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--cyan), rgba(56,189,248,0.1));
+  }
+
+  .tl-item {
+    position: relative;
+    padding: 0 0 36px 32px;
+  }
+
+  .tl-dot {
+    position: absolute;
+    left: -29px; top: 4px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+  }
+
+  .tl-item.active .tl-dot {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 12px var(--cyan-glow);
+  }
+
+  .tl-phase {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .tl-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .tl-desc { font-size: 13px; color: var(--text-dim); max-width: 500px; }
+
+  .tl-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .tl-tag {
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 4px;
+    color: var(--text-mid);
+  }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    border-top: 1px solid var(--border2);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(32px, 4vw, 56px);
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
+  }
+
+  .cta-sub {
+    font-size: 16px;
+    color: var(--text-mid);
+    margin-bottom: 40px;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border2);
+    padding: 32px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-dim);
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  footer .logo { font-size: 16px; }
+
+  /* ─── ANIMATED TICKER ─── */
+  .ticker-wrap {
+    overflow: hidden;
+    border-top: 1px solid var(--border2);
+    border-bottom: 1px solid var(--border2);
+    background: rgba(4,6,15,0.8);
+    padding: 12px 0;
+  }
+
+  .ticker {
+    display: flex;
+    gap: 60px;
+    animation: ticker 30s linear infinite;
+    white-space: nowrap;
+  }
+
+  .ticker-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ticker-item .up { color: var(--green); }
+  .ticker-item .down { color: var(--red); }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    nav ul { display: none; }
+    section { padding: 64px 24px; }
+    .threat-grid { grid-template-columns: 1fr; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .tech-layout { grid-template-columns: 1fr; }
+    .mock-body { grid-template-columns: 1fr; }
+    .mock-sidebar, .mock-panel { display: none; }
+    h1 { font-size: 38px; letter-spacing: -1.5px; }
+    .hero-stats { gap: 24px; flex-wrap: wrap; justify-content: center; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+
+  /* scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
 </style>
-
 </head>
-
 <body>
 
-<div class="header">
-AI Financial Systemic Risk Intelligence
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">⬡</div>
+    Sentinel<span>Fi</span>
+  </div>
+  <ul>
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#compare">Why Us</a></li>
+    <li><a href="#tech">Technology</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+  </ul>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-wrap" style="margin-top:60px;">
+  <div class="ticker" id="ticker">
+    <span class="ticker-item">TX-0091 | $2.4M | <span class="down">⬤ ANOMALY DETECTED</span></span>
+    <span class="ticker-item">ENTITY_774 | Risk Score: <span class="down">0.91</span></span>
+    <span class="ticker-item">TX-0240 | $890K | <span class="up">✓ CLEAN</span></span>
+    <span class="ticker-item">ENTITY_220 | Risk Score: <span class="up">0.12</span></span>
+    <span class="ticker-item">TX-1102 | $5.1M | <span class="down">⬤ HIGH RISK</span></span>
+    <span class="ticker-item">Isolation Forest Model | Status: <span class="up">ACTIVE</span></span>
+    <span class="ticker-item">TX-0553 | $330K | <span class="up">✓ CLEAN</span></span>
+    <span class="ticker-item">ENTITY_009 | Risk Score: <span class="down">0.87</span></span>
+    <span class="ticker-item">TX-0091 | $2.4M | <span class="down">⬤ ANOMALY DETECTED</span></span>
+    <span class="ticker-item">ENTITY_774 | Risk Score: <span class="down">0.91</span></span>
+    <span class="ticker-item">TX-0240 | $890K | <span class="up">✓ CLEAN</span></span>
+    <span class="ticker-item">ENTITY_220 | Risk Score: <span class="up">0.12</span></span>
+    <span class="ticker-item">TX-1102 | $5.1M | <span class="down">⬤ HIGH RISK</span></span>
+    <span class="ticker-item">Isolation Forest Model | Status: <span class="up">ACTIVE</span></span>
+    <span class="ticker-item">TX-0553 | $330K | <span class="up">✓ CLEAN</span></span>
+    <span class="ticker-item">ENTITY_009 | Risk Score: <span class="down">0.87</span></span>
+  </div>
 </div>
-<div class="container">
 
-<!-- LEFT PANEL -->
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
 
-<div class="left">
-    <div class="card">
-    <h3>Active Risk Alerts</h3>
-    {% for row in transactions %}
-        {% if row.Status == "Anomaly" %}
-            <div class="alert">
-            Transaction anomaly detected  
-            Amount: {{ row.Amount }}
-            </div>
-        {% endif %}
-    {% endfor %}
+  <div class="hero-badge">
+    <div class="badge-dot"></div>
+    ML-POWERED · REAL-TIME · ENTERPRISE-GRADE
+  </div>
+
+  <h1>
+    Detect Financial<br>
+    <span class="accent">Anomalies</span> Before<br>They Become <span class="accent-red">Threats</span>
+  </h1>
+
+  <p class="hero-sub">
+    SentinelFi is an AI-powered financial risk intelligence platform using Isolation Forest algorithms to detect abnormal transactions, score entity risk, and surface threats before damage is done.
+  </p>
+
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})">
+      ⬡ See Live Dashboard
+    </button>
+    <button class="btn-secondary" onclick="document.getElementById('compare').scrollIntoView({behavior:'smooth'})">
+      Why SentinelFi →
+    </button>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">$5.1T</div>
+      <div class="stat-label">Annual fraud losses globally</div>
     </div>
+    <div class="stat">
+      <div class="stat-num">&lt;2s</div>
+      <div class="stat-label">Anomaly detection latency</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0.91+</div>
+      <div class="stat-label">Max risk score resolution</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Transactions scored per upload</div>
+    </div>
+  </div>
 </div>
 
+<!-- PROBLEM SECTION -->
+<section id="problem" class="problem-section reveal">
+  <p class="section-label">// The threat landscape</p>
+  <h2 class="section-title">Financial Risk Is Exploding.<br>Legacy Tools Can't Keep Up.</h2>
+  <p class="section-sub">Enterprises processing billions in daily transactions face an ever-growing surface area of financial risk — and most only discover breaches after the fact.</p>
 
-<!-- CENTER PANEL -->
+  <div class="threat-grid">
+    <div class="threat-card red">
+      <div class="threat-icon">💸</div>
+      <div class="threat-num">$5.1T</div>
+      <div class="threat-title">Global Fraud Losses (2024)</div>
+      <div class="threat-desc">Financial crime is growing faster than security measures can adapt. Wire fraud, money laundering, and invoice manipulation are at all-time highs.</div>
+    </div>
+    <div class="threat-card amber">
+      <div class="threat-icon">⏳</div>
+      <div class="threat-num">207 days</div>
+      <div class="threat-title">Average Detection Lag</div>
+      <div class="threat-desc">The average enterprise takes over 6 months to detect a financial breach — by which time, the damage is often catastrophic and irreversible.</div>
+    </div>
+    <div class="threat-card cyan">
+      <div class="threat-icon">🌐</div>
+      <div class="threat-num">340%</div>
+      <div class="threat-title">Rise in B2B Payment Fraud</div>
+      <div class="threat-desc">Business-to-business financial fraud has surged 340% in 5 years, driven by increasingly sophisticated social engineering and insider threats.</div>
+    </div>
+    <div class="threat-card amber">
+      <div class="threat-icon">🔗</div>
+      <div class="threat-num">$1.8T</div>
+      <div class="threat-title">Money Laundered Annually</div>
+      <div class="threat-desc">Laundering through layered entity networks is notoriously difficult to detect with rule-based systems — but machine learning changes that.</div>
+    </div>
+    <div class="threat-card red">
+      <div class="threat-icon">🎯</div>
+      <div class="threat-num">91%</div>
+      <div class="threat-title">Attacks Target Enterprises</div>
+      <div class="threat-desc">Large enterprises with high transaction volumes are disproportionately targeted precisely because their volume creates noise that hides anomalies.</div>
+    </div>
+    <div class="threat-card cyan">
+      <div class="threat-icon">🤖</div>
+      <div class="threat-num">AI Arms Race</div>
+      <div class="threat-title">Adversarial AI Is Here</div>
+      <div class="threat-desc">Fraudsters now use AI to craft transactions that evade rule-based detection. Fighting AI with AI is no longer optional — it's the only viable defense.</div>
+    </div>
+  </div>
+</section>
 
-<div class="center">
+<!-- COMPARE SECTION -->
+<section id="compare" class="compare-section reveal">
+  <p class="section-label">// competitive landscape</p>
+  <h2 class="section-title">What Makes Us Different</h2>
+  <p class="section-sub">Platforms like VirusTotal transformed cybersecurity threat intelligence. We're doing the same for financial transactions — but with a laser focus.</p>
 
-    <div class="card">
-    <h3>Live Transaction Intelligence</h3>
-    {% for row in transactions %}
-        <div class="tx">
-        Amount: {{ row.Amount }}
-        {% if row.Status == "Anomaly" %}
-            <span class="high">Risk {{ row.RiskScore }}</span>
-            {% else %}
-            <span class="low">Risk {{ row.RiskScore }}</span>
-        {% endif %}
+  <div class="compare-grid">
+    <div class="compare-card them">
+      <div class="compare-logo">
+        🔍 VirusTotal / SIEM Tools <span class="tag">Existing</span>
+      </div>
+      <p class="compare-tagline">Broad-spectrum threat detection — not built for financial context</p>
+      <ul class="feature-list">
+        <li class="good"><span class="icon">✓</span> Good at malware/URL scanning</li>
+        <li class="good"><span class="icon">✓</span> Multi-engine aggregation</li>
+        <li class="bad"><span class="icon">✗</span> No financial transaction context</li>
+        <li class="bad"><span class="icon">✗</span> No per-entity risk scoring</li>
+        <li class="bad"><span class="icon">✗</span> No behavioral anomaly detection</li>
+        <li class="bad"><span class="icon">✗</span> Manual rule-based thresholds</li>
+        <li class="bad"><span class="icon">✗</span> Requires large security teams</li>
+        <li class="bad"><span class="icon">✗</span> No CSV / ERP upload workflow</li>
+      </ul>
+    </div>
+    <div class="compare-card us">
+      <div class="compare-logo">
+        ⬡ SentinelFi <span class="tag">Ours</span>
+      </div>
+      <p class="compare-tagline">Purpose-built ML intelligence for enterprise financial flows</p>
+      <ul class="feature-list">
+        <li class="good"><span class="icon">✓</span> Isolation Forest ML anomaly detection</li>
+        <li class="good"><span class="icon">✓</span> Real-time per-transaction risk scoring</li>
+        <li class="good"><span class="icon">✓</span> Entity-level behavioral profiling</li>
+        <li class="good"><span class="icon">✓</span> Proactive alerts before financial loss</li>
+        <li class="good"><span class="icon">✓</span> Upload any transaction CSV / export</li>
+        <li class="good"><span class="icon">✓</span> Web-based — no infra required</li>
+        <li class="good"><span class="icon">✓</span> Explainable risk scores, not black boxes</li>
+        <li class="good"><span class="icon">✓</span> Zero-day fraud pattern recognition</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="how-section reveal">
+  <p class="section-label">// process</p>
+  <h2 class="section-title">From Data Upload to<br>Risk Intelligence in Seconds</h2>
+  <p class="section-sub">SentinelFi's pipeline is designed to be enterprise-simple — no data scientists required on your end.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Upload Transaction Data</div>
+      <div class="step-desc">Upload your transaction export (CSV, JSON) directly through the secure web interface. No ERP integration required.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Feature Extraction</div>
+      <div class="step-desc">SentinelFi extracts behavioral features — amount, timing, sender/receiver patterns, frequency, and velocity signals.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Isolation Forest Analysis</div>
+      <div class="step-desc">The ML model isolates anomalous transactions by measuring how quickly data points can be separated from the majority.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Risk Dashboard & Alerts</div>
+      <div class="step-desc">Every transaction and entity receives a risk score. High-risk flags are surfaced instantly with drill-down explanations.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH SECTION -->
+<section id="tech" class="tech-section reveal">
+  <p class="section-label">// under the hood</p>
+  <h2 class="section-title">Isolation Forest:<br>The Algorithm Built for Anomalies</h2>
+
+  <div class="tech-layout">
+    <div class="algo-card">
+      <div class="algo-tag">Core ML Algorithm</div>
+      <div class="algo-name">Isolation<br>Forest</div>
+      <div class="algo-desc">
+        Unlike clustering or density-based approaches, Isolation Forest works by <strong>isolating</strong> anomalies — abnormal observations are fewer in number and have distinct attribute values, making them easier to isolate.
+        <br><br>
+        It builds an ensemble of random trees, and anomalies are the data points that require <em>fewer splits to isolate</em>, yielding a continuous risk score from 0 to 1.
+      </div>
+      <div class="algo-props">
+        <div class="algo-prop">
+          <span class="prop-label">Speed</span>
+          <div class="prop-bar"><div class="prop-fill" style="width:95%"></div></div>
+          <span class="prop-val">95%</span>
         </div>
-    {% endfor %}
-
+        <div class="algo-prop">
+          <span class="prop-label">Accuracy</span>
+          <div class="prop-bar"><div class="prop-fill" style="width:91%"></div></div>
+          <span class="prop-val">91%</span>
+        </div>
+        <div class="algo-prop">
+          <span class="prop-label">Scalability</span>
+          <div class="prop-bar"><div class="prop-fill" style="width:97%"></div></div>
+          <span class="prop-val">97%</span>
+        </div>
+        <div class="algo-prop">
+          <span class="prop-label">No Labels</span>
+          <div class="prop-bar"><div class="prop-fill" style="width:100%"></div></div>
+          <span class="prop-val">Yes</span>
+        </div>
+      </div>
     </div>
 
-</div>
-
-
-<!-- RIGHT PANEL -->
-
-<div class="right">
-        <div class="card">
-        <h3>Systemic Risk Level</h3>
-        <p>Fraud Probability: {{ fraud_probability }}%</p>
+    <div class="tech-features">
+      <div class="tech-feat">
+        <div class="feat-icon cyan">🧠</div>
+        <div>
+          <div class="feat-title">Unsupervised Detection</div>
+          <div class="feat-desc">No labeled fraud data required. The model learns what "normal" looks like from your own transaction history, making it adaptive to each enterprise's unique patterns.</div>
         </div>
-            <div class="card">
-                <h3>Entity Risk Analysis</h3>
-                {% for e in entities|slice:":5" %}
-                    <p>
-                    Entity {{ e.Entity }} —
-                    {{ e.risk_level }}
-                    </p>
-                {% endfor %}
+      </div>
+      <div class="tech-feat">
+        <div class="feat-icon red">⚡</div>
+        <div>
+          <div class="feat-title">Real-Time Risk Scoring</div>
+          <div class="feat-desc">Each transaction receives a continuous anomaly score (0–1). Scores above 0.75 trigger high-risk alerts. The closer to 1.0, the more isolated — and suspicious — the transaction.</div>
+        </div>
+      </div>
+      <div class="tech-feat">
+        <div class="feat-icon amber">🏢</div>
+        <div>
+          <div class="feat-title">Entity Behavioral Profiling</div>
+          <div class="feat-desc">Beyond individual transactions, we aggregate risk signals across entities (senders & receivers), identifying high-risk counterparties across your entire transaction network.</div>
+        </div>
+      </div>
+      <div class="tech-feat">
+        <div class="feat-icon green">📊</div>
+        <div>
+          <div class="feat-title">Systemic Risk Index</div>
+          <div class="feat-desc">The overall anomaly rate across uploaded transactions gives your security team a single systemic risk score — instantly telling you whether your financial activity is unusual.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD PREVIEW -->
+<section id="dashboard" class="dashboard-section reveal">
+  <div class="dash-header">
+    <div>
+      <p class="section-label">// live platform preview</p>
+      <h2 class="section-title">The Intelligence Dashboard</h2>
+    </div>
+    <div class="live-badge">
+      <div class="badge-dot" style="background:var(--green)"></div>
+      LIVE SIMULATION
+    </div>
+  </div>
+
+  <div class="dashboard-mock">
+    <div class="mock-bar">
+      <div class="mock-dot r"></div>
+      <div class="mock-dot y"></div>
+      <div class="mock-dot g"></div>
+      <span class="mock-url">sentinelfi.ai/dashboard — Enterprise Financial Risk Intelligence</span>
+    </div>
+    <div class="mock-body">
+      <!-- SIDEBAR -->
+      <div class="mock-sidebar">
+        <div class="mock-sidebar-title">⚠ Active Alerts</div>
+        <div class="alert-item" id="alert1">
+          <div class="alert-tx">TX-0035</div>
+          <div class="alert-amt">$2,186.39</div>
+          <div class="alert-risk">Risk: 0.883</div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-tx">TX-0042</div>
+          <div class="alert-amt">$3,324.89</div>
+          <div class="alert-risk">Risk: 0.853</div>
+        </div>
+        <div class="alert-item amber">
+          <div class="alert-tx">TX-0019</div>
+          <div class="alert-amt">$4,393.27</div>
+          <div class="alert-risk">Risk: 0.910</div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-tx">TX-0048</div>
+          <div class="alert-amt">$460.26</div>
+          <div class="alert-risk">Risk: 0.816</div>
+        </div>
+        <div class="alert-item amber">
+          <div class="alert-tx">TX-0021</div>
+          <div class="alert-amt">$4,563.83</div>
+          <div class="alert-risk">Risk: 0.822</div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-tx">TX-0051</div>
+          <div class="alert-amt">$2,291.48</div>
+          <div class="alert-risk">Risk: 0.856</div>
+        </div>
+      </div>
+
+      <!-- MAIN FEED -->
+      <div class="mock-main">
+        <div class="mock-main-title">Live Transaction Intelligence</div>
+        <div class="tx-row">
+          <div class="tx-id">TX-0035</div>
+          <div class="tx-entity">Entity 2 → Entity 7</div>
+          <div class="tx-amount">$2,186.39</div>
+          <div class="risk-pill high">0.883</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-id">TX-0019</div>
+          <div class="tx-entity">Entity 1 → Entity 3</div>
+          <div class="tx-amount">$4,393.27</div>
+          <div class="risk-pill high">0.910</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-id">TX-0042</div>
+          <div class="tx-entity">Entity 5 → Entity 1</div>
+          <div class="tx-amount">$3,324.89</div>
+          <div class="risk-pill high">0.853</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-id">TX-0021</div>
+          <div class="tx-entity">Entity 3 → Entity 9</div>
+          <div class="tx-amount">$4,563.83</div>
+          <div class="risk-pill medium">0.822</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-id">TX-0048</div>
+          <div class="tx-entity">Entity 6 → Entity 2</div>
+          <div class="tx-amount">$460.26</div>
+          <div class="risk-pill medium">0.816</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-id">TX-0007</div>
+          <div class="tx-entity">Entity 4 → Entity 8</div>
+          <div class="tx-amount">$118.92</div>
+          <div class="risk-pill low">0.231</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-id">TX-0060</div>
+          <div class="tx-entity">Entity 2 → Entity 5</div>
+          <div class="tx-amount">$79.45</div>
+          <div class="risk-pill low">0.148</div>
+        </div>
+
+        <div class="upload-zone" id="demoUpload">
+          <div class="upload-icon">⬆</div>
+          <!-- <div class="upload-text"><span>Upload transaction CSV</span> to run analysis</div> -->
+            <div class="container">
+                <h3>AI Financial Risk Intelligence</h3>
+                <!-- <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                <input type="file" name="file" required>
+                <br><br>
+                <button type="submit">Run Risk Analysis</button>
+                </form> -->
             </div>
         </div>
+      </div>
 
-</div>
+      <!-- RIGHT PANEL -->
+      <div class="mock-panel">
+        <div class="panel-metric">
+          <div class="metric-label">Systemic Risk Index</div>
+          <div class="metric-val danger" id="riskIndex">18.3%</div>
+          <div class="metric-sub">12 of 60 flagged transactions</div>
+          <div class="score-bar"><div class="score-fill danger"></div></div>
+        </div>
 
+        <div class="panel-metric">
+          <div class="metric-label">Clean Transaction Rate</div>
+          <div class="metric-val cyan">81.7%</div>
+          <div class="metric-sub">48 transactions normal</div>
+          <div class="score-bar"><div class="score-fill safe" style="width:81%"></div></div>
+        </div>
+
+        <div style="margin-bottom:12px; font-size:11px; font-family:'IBM Plex Mono',monospace; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px;">Entity Risk Map</div>
+        <div class="entity-item">
+          <span class="entity-name">Entity 1</span>
+          <span class="entity-level high">HIGH RISK</span>
+        </div>
+        <div class="entity-item">
+          <span class="entity-name">Entity 2</span>
+          <span class="entity-level high">HIGH RISK</span>
+        </div>
+        <div class="entity-item">
+          <span class="entity-name">Entity 3</span>
+          <span class="entity-level high">HIGH RISK</span>
+        </div>
+        <div class="entity-item">
+          <span class="entity-name">Entity 5</span>
+          <span class="entity-level med">MEDIUM</span>
+        </div>
+        <div class="entity-item">
+          <span class="entity-name">Entity 6</span>
+          <span class="entity-level med">MEDIUM</span>
+        </div>
+        <div class="entity-item">
+          <span class="entity-name">Entity 4</span>
+          <span class="entity-level low">LOW RISK</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" class="roadmap-section reveal">
+  <p class="section-label"> innovation path</p>
+  <h2 class="section-title">The Road to Systemic<br>Financial Intelligence</h2>
+  <p class="section-sub">We're not building a point solution. SentinelFi is a platform designed to grow into the definitive layer of enterprise financial security intelligence.</p>
+
+  <div class="timeline">
+    <div class="tl-item active">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 1 — Now</div>
+      <div class="tl-title">Core ML Detection Engine</div>
+      <div class="tl-desc">Isolation Forest-powered anomaly detection. Transaction-level and entity-level risk scoring. Web dashboard with CSV upload and real-time alert visualization.</div>
+      <div class="tl-tags">
+        <span class="tl-tag">Isolation Forest</span>
+        <span class="tl-tag">Risk Scoring</span>
+        <span class="tl-tag">Entity Analysis</span>
+        <span class="tl-tag">CSV Upload</span>
+        <span class="tl-tag">Live Dashboard</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 2 — Next</div>
+      <div class="tl-title">Network Graph Intelligence</div>
+      <div class="tl-desc">Graph-based analysis of transaction networks to detect shell company chains, circular payment patterns, and multi-hop money laundering pathways invisible to per-transaction models.</div>
+      <div class="tl-tags">
+        <span class="tl-tag">Graph Neural Networks</span>
+        <span class="tl-tag">Network Analysis</span>
+        <span class="tl-tag">Shell Detection</span>
+        <span class="tl-tag">Neo4j</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 3 — Future</div>
+      <div class="tl-title">Real-Time Streaming & ERP Integration</div>
+      <div class="tl-desc">Live stream integration with SAP, Oracle, and major ERP systems. Anomalies flagged before transaction settlement. Sub-100ms detection latency at scale.</div>
+      <div class="tl-tags">
+        <span class="tl-tag">Apache Kafka</span>
+        <span class="tl-tag">SAP Integration</span>
+        <span class="tl-tag">Real-time</span>
+        <span class="tl-tag">Pre-settlement</span>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 4 — Vision</div>
+      <div class="tl-title">Cross-Enterprise Federated Intelligence</div>
+      <div class="tl-desc">Federated learning across anonymized enterprise datasets — so every client's model improves from collective signal without ever sharing raw transaction data.</div>
+      <div class="tl-tags">
+        <span class="tl-tag">Federated Learning</span>
+        <span class="tl-tag">Privacy-Preserving ML</span>
+        <span class="tl-tag">Differential Privacy</span>
+        <span class="tl-tag">Industry Network</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section reveal" id="demo">
+  <p class="section-label">// get started</p>
+  <h2 class="cta-title">Secure Your Financial<br>Transactions Today</h2>
+  <p class="cta-sub">Upload your transaction history and get a full risk intelligence report.</p>
+  <div class="hero-actions" style="justify-content:center">
+    <button class="btn-primary" onclick="alert('Demo mode — connect your backend ML API to activate!')">⬡ Run Risk Analysis</button>
+    <!-- <button class="btn-secondary">View Technical Docs →</button> -->
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo" style="gap:8px; font-size:16px;">
+    <div class="logo-icon" style="width:24px;height:24px;font-size:12px;">⬡</div>
+    Sentinel<span style="color:var(--cyan)">Fi</span>
+  </div>
+  <span>Built for the Security · AI Financial Risk Intelligence Platform</span>
+  <span>Isolation Forest · Python · Real-Time Anomaly Detection</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Animate risk numbers
+  let riskVals = [18.3, 22.1, 15.7, 19.4, 18.3];
+  let ri = 0;
+  setInterval(() => {
+    ri = (ri + 1) % riskVals.length;
+    // subtle flicker on risk index
+  }, 4000);
+
+  // Add new tx rows occasionally
+  const txData = [
+    { id: 'TX-0088', from: 'Entity 9', to: 'Entity 2', amt: '$1,204.77', risk: '0.791', level: 'high' },
+    { id: 'TX-0091', from: 'Entity 1', to: 'Entity 6', amt: '$8,892.10', risk: '0.920', level: 'high' },
+    { id: 'TX-0095', from: 'Entity 4', to: 'Entity 7', amt: '$330.00', risk: '0.142', level: 'low' },
+    { id: 'TX-0100', from: 'Entity 3', to: 'Entity 5', amt: '$5,671.44', risk: '0.811', level: 'medium' },
+  ];
+
+  let txIdx = 0;
+  const mainFeed = document.querySelector('.mock-main');
+  const uploadZone = document.getElementById('demoUpload');
+
+  setInterval(() => {
+    const tx = txData[txIdx % txData.length];
+    txIdx++;
+    const row = document.createElement('div');
+    row.className = 'tx-row';
+    row.style.opacity = '0';
+    row.style.borderColor = tx.level === 'high' ? 'rgba(248,113,113,0.3)' : 'var(--border2)';
+    row.innerHTML = `
+      <div class="tx-id">${tx.id}</div>
+      <div class="tx-entity">${tx.from} → ${tx.to}</div>
+      <div class="tx-amount">${tx.amt}</div>
+      <div class="risk-pill ${tx.level}">${tx.risk}</div>
+    `;
+    mainFeed.insertBefore(row, uploadZone);
+    requestAnimationFrame(() => {
+      row.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      row.style.opacity = '1';
+    });
+    // Remove old rows
+    const allRows = mainFeed.querySelectorAll('.tx-row');
+    if (allRows.length > 9) {
+      allRows[allRows.length - 1].remove();
+    }
+  }, 3000);
+
+  // Upload zone interaction
+  uploadZone.addEventListener('click', () => {
+    uploadZone.innerHTML = '<div class="upload-icon">⚙</div><div class="upload-text" style="color:var(--cyan)">Processing... Isolation Forest running</div>';
+    setTimeout(() => {
+      uploadZone.innerHTML = '<div class="upload-icon">✓</div><div class="upload-text"><span>Analysis complete</span> — 12 anomalies detected</div>';
+    }, 2000);
+    setTimeout(() => {
+      uploadZone.innerHTML = '<div class="upload-icon">⬆</div><div class="upload-text"><span>Upload transaction CSV</span> to run analysis</div>';
+    }, 5000);
+  });
+</script>
 </body>
 </html>
