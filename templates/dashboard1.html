@@ -1,0 +1,76 @@
+<!-- <h2>Transaction Analysis Results</h2>
+
+<p>Total Transactions: {{ total }}</p>
+<p>Anomalies Detected: {{ anomalies }}</p>
+
+<table border="1">
+<tr>
+<th>Amount</th>
+<th>Status</th>
+<th>Risk Score</th>
+</tr>
+
+{% for row in transactions %}
+<tr>
+<td>{{ row.Amount }}</td>
+<td>{{ row.Status }}</td>
+<td>{{ row.RiskScore }}</td>
+</tr>
+{% endfor %}
+
+</table> -->
+
+<h2>Transaction Analysis Results</h2>
+
+<p>Total Transactions: {{ total }}</p>
+<p>Anomalies Detected: {{ anomalies }}</p>
+<p>Fraud Probability: {{ fraud_probability }}%</p>
+
+<h3>Transactions</h3>
+
+<table border="1">
+
+<tr>
+<th>Amount</th>
+<th>Status</th>
+<th>Risk Score</th>
+</tr>
+
+{% for row in transactions %}
+
+<tr>
+<td>{{ row.Amount }}</td>
+<td>{{ row.Status }}</td>
+<td>{{ row.RiskScore }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+
+<h3>Entity Risk Analysis</h3>
+
+<table border="1">
+
+<tr>
+<th>Entity</th>
+<th>Total Transactions</th>
+<th>Anomalies</th>
+<th>Risk Score</th>
+<th>Risk Level</th>
+</tr>
+
+{% for e in entities %}
+
+<tr>
+<td>{{ e.Entity }}</td>
+<td>{{ e.total_transactions }}</td>
+<td>{{ e.anomalies }}</td>
+<td>{{ e.risk_score }}</td>
+<td>{{ e.risk_level }}</td>
+</tr>
+
+{% endfor %}
+
+</table>

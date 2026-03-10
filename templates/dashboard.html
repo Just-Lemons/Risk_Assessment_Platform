@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Risk Intelligence Dashboard</title>
+
+<style>
+
+body{
+background:#020b1c;
+color:white;
+font-family:Arial;
+}
+
+.header{
+padding:20px;
+font-size:24px;
+color:#49b6ff;
+}
+
+.container{
+display:flex;
+padding:20px;
+}
+
+.left{
+width:20%;
+}
+
+.center{
+width:55%;
+}
+
+.right{
+width:25%;
+}
+
+.card{
+background:#0b1f3a;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+}
+
+.alert{
+border-left:4px solid red;
+padding:10px;
+margin-bottom:10px;
+background:#09182c;
+}
+
+.tx{
+padding:10px;
+border-bottom:1px solid #132a4a;
+}
+
+.high{color:#ff4d4d;}
+.medium{color:#ffb84d;}
+.low{color:#5cff8d;}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+AI Financial Systemic Risk Intelligence
+</div>
+<div class="container">
+
+<!-- LEFT PANEL -->
+
+<div class="left">
+    <div class="card">
+    <h3>Active Risk Alerts</h3>
+    {% for row in transactions %}
+        {% if row.Status == "Anomaly" %}
+            <div class="alert">
+            Transaction anomaly detected  
+            Amount: {{ row.Amount }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    </div>
+</div>
+
+
+<!-- CENTER PANEL -->
+
+<div class="center">
+
+    <div class="card">
+    <h3>Live Transaction Intelligence</h3>
+    {% for row in transactions %}
+        <div class="tx">
+        Amount: {{ row.Amount }}
+        {% if row.Status == "Anomaly" %}
+            <span class="high">Risk {{ row.RiskScore }}</span>
+            {% else %}
+            <span class="low">Risk {{ row.RiskScore }}</span>
+        {% endif %}
+        </div>
+    {% endfor %}
+
+    </div>
+
+</div>
+
+
+<!-- RIGHT PANEL -->
+
+<div class="right">
+        <div class="card">
+        <h3>Systemic Risk Level</h3>
+        <p>Fraud Probability: {{ fraud_probability }}%</p>
+        </div>
+            <div class="card">
+                <h3>Entity Risk Analysis</h3>
+                {% for e in entities|slice:":5" %}
+                    <p>
+                    Entity {{ e.Entity }} —
+                    {{ e.risk_level }}
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
+
+</div>
+
+</body>
+</html>

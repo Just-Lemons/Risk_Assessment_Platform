@@ -1,0 +1,71 @@
+<!-- <h2>Financial Risk Assessment Platform</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="file">
+    <button type="submit">Analyze Transactions</button>
+</form> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Financial Risk Intelligence</title>
+
+<style>
+
+body{
+    background:#020b1c;
+    font-family:Arial;
+    color:white;
+    text-align:center;
+}
+
+.container{
+    margin-top:120px;
+    background:#0b1f3a;
+    width:500px;
+    margin:auto;
+    padding:40px;
+    border-radius:12px;
+    box-shadow:0px 6px 20px rgba(0,0,0,0.6);
+}
+
+h1{
+    color:#49b6ff;
+    margin-bottom:40px;
+}
+
+button{
+    background:#3aa6ff;
+    color:white;
+    border:none;
+    padding:12px 24px;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1f82d6;
+}
+
+input{
+        color:white;
+}
+</style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>AI Financial Risk Intelligence</h1>
+        <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" required>
+        <br><br>
+        <button type="submit">Run Risk Analysis</button>
+        </form>
+    </div>
+
+</body>
+</html>
